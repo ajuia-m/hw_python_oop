@@ -1,5 +1,6 @@
 M_IN_KM = 1000
 LEN_STEP = 1.00
+KMH_MH_MULTIPLIER = 0.278
 
 class InfoMessage:
     """Информационное сообщение о тренировке."""
@@ -53,9 +54,9 @@ class Training:
     def show_training_info(self) -> InfoMessage:
         return InfoMessage(self.__name__,
                            self.duration,
-                           self.get_distance, 
-                           self.get_mean_speed,
-                           self.get_spent_calories)
+                           self.get_distance(), 
+                           self.get_mean_speed(),
+                           self.get_spent_calories())
     
 
 class Running(Training):
@@ -88,9 +89,9 @@ class SportsWalking(Training):
         self.height = height #в метрах
 
     def get_spent_calories(self) -> float:
-        return (((SportsWalking.CALORIES_WEIGHT_MULTIPLIER * self.weight
-                + (self.get_mean_speed(self.distance, self.duration)**2 / self.height)
-                * SportsWalking.CALORIES_WEIGHT_MULTIPLIER_2 * self.weight) * self.duration))
+        return ((SportsWalking.CALORIES_WEIGHT_MULTIPLIER * self.weight
+                + (KMH_MH_MULTIPLIER*self.get_mean_speed(self.distance, self.duration)**2 / self.height)
+                * SportsWalking.CALORIES_WEIGHT_MULTIPLIER_2 * self.weight) * self.duration)    
     
 
 class Swimming(Training):
@@ -130,7 +131,7 @@ def read_package(workout_type: str, data: list) -> Training:
 def main(training: Training) -> None:
     """Главная функция."""
     info = training.show_training_info()
-    print(info.get_message)
+    print(info.get_message())
 
 if __name__ == '__main__':
     packages = [
