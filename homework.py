@@ -1,4 +1,4 @@
-M_IN_KM = 1000
+M_IN_KM = 1000.0
 LEN_STEP = 1.00
 KMH_MH_MULTIPLIER = 0.278
 
@@ -19,9 +19,9 @@ class InfoMessage:
 
     def get_message(self):
         return (f'Тип тренировки: {self.training_type} ; ',
-                f'Длительность: {self.duration.f3} ч.; ',
-                f'Дистанция: {self.distance.f3} км; ',
-                f'Потрачено ккал: {self.calories.f3}.')
+                f'Длительность: {round(self.duration, 3)} ч.; ',
+                f'Дистанция: {round(self.distance, 3)} км; ',
+                f'Потрачено ккал: {round(self.calories, 3)}.')
 
 
 class Training:
@@ -33,17 +33,17 @@ class Training:
                  weight: float,
                  ) -> None:
         self.action = action
-        self.duration = duration
-        self.weight = weight
+        self.duration = float(duration)
+        self.weight = float(weight)
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
-        return (self.action * LEN_STEP / M_IN_KM)
+        return (float(self.action) * LEN_STEP / M_IN_KM)
         
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-        return (self.get_distance(self.action)/self.duration)
+        return (self.get_distance()/self.duration)
         
 
     def get_spent_calories(self) -> float:
@@ -52,7 +52,7 @@ class Training:
         return 'Ошибка: утерян тип тренировки'
 
     def show_training_info(self) -> InfoMessage:
-        return InfoMessage(self.__name__,
+        return InfoMessage(self.__class__.__name__,
                            self.duration,
                            self.get_distance(), 
                            self.get_mean_speed(),
@@ -68,7 +68,7 @@ class Running(Training):
 
     def get_spent_calories(self) -> float:
         return ((Running.CALORIES_MEAN_SPEED_MULTIPLIER
-                * self.get_mean_speed(self.distance, self.duration)
+                * self.get_mean_speed()
                 + Running.CALORIES_MEAN_SPEED_SHIFT)
                 * self.weight / M_IN_KM * self.duration)
 
@@ -86,11 +86,11 @@ class SportsWalking(Training):
                  height: float
                  ) -> None:
         super().__init__(action, duration, weight)
-        self.height = height #в метрах
+        self.height = float(height) #в метрах
 
     def get_spent_calories(self) -> float:
         return ((SportsWalking.CALORIES_WEIGHT_MULTIPLIER * self.weight
-                + (KMH_MH_MULTIPLIER*self.get_mean_speed(self.distance, self.duration)**2 / self.height)
+                + (KMH_MH_MULTIPLIER*self.get_mean_speed()**2 / self.height)
                 * SportsWalking.CALORIES_WEIGHT_MULTIPLIER_2 * self.weight) * self.duration)    
     
 
@@ -109,14 +109,14 @@ class Swimming(Training):
                  count_pool: float) -> None:
         super().__init__(action, duration, weight)
 
-        self.length_pool = length_pool  # длина бассейна в метрах.
-        self.count_pool = count_pool    # сколько раз пользователь переплыл бассейн,
+        self.length_pool = float(length_pool)  # длина бассейна в метрах.
+        self.count_pool = float(count_pool)    # сколько раз пользователь переплыл бассейн,
                                         # типом float учтено, что пользователь может сдаться на пол пути
     def get_mean_speed(self) -> float:
         return (self.length_pool * self.count_pool / M_IN_KM / self.duration)
 
     def get_spent_calories(self) -> float:
-        return ((self.get_mean_speed + Swimming.CALORIES_SPEED_MULTIPLIER)
+        return ((self.get_mean_speed() + Swimming.CALORIES_SPEED_MULTIPLIER)
                 * Swimming.CALORIES_WEIGHT_MULTIPLIER * self.weight * self.duration)
 
 def read_package(workout_type: str, data: list) -> Training:
@@ -124,14 +124,13 @@ def read_package(workout_type: str, data: list) -> Training:
     training_types = {'SWM': Swimming,
                       'RUN': Running,
                       'WLK': SportsWalking}
-    print(data)
-    return (training_types[workout_type](data))
+    return (training_types[workout_type](*data))
 
 
 def main(training: Training) -> None:
     """Главная функция."""
     info = training.show_training_info()
-    print(info.get_message())
+    print(*info.get_message())
 
 if __name__ == '__main__':
     packages = [
