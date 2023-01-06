@@ -14,10 +14,6 @@ class InfoMessage:
         self.speed = speed
         self.calories = calories
 
-    def toFixed(self, f: float, n=0):
-        a, b = str(f).split('.')
-        return '{}.{}{}'.format(a, b[:n], '0' * (n - len(b)))
-
     def get_message(self) -> str:
         """Получить текстовую информацию о тренировке"""
         return (f'Тип тренировки: {self.training_type}; '
