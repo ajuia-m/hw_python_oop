@@ -50,7 +50,8 @@ class Training:
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         # Traing type error messaging as parent
-        return 0.0  # Ошибка: утерян тип тренировки'
+        print('Ошибка: утерян тип тренировки')
+        return 0.0
 
     def show_training_info(self) -> InfoMessage:
         """Запросить информацию о тренировке"""
@@ -69,11 +70,9 @@ class Running(Training):
     LEN_STEP = 0.65
 
     def get_spent_calories(self) -> float:
-        '''(18 * средняя_скорость + 1.79)
-        * вес_спортсмена / M_IN_KM * время_тренировки_в_минутах'''
-        return ((Running.CALORIES_MEAN_SPEED_MULTIPLIER
+        return ((self.CALORIES_MEAN_SPEED_MULTIPLIER
                 * self.get_mean_speed()
-                + Running.CALORIES_MEAN_SPEED_SHIFT)
+                + self.CALORIES_MEAN_SPEED_SHIFT)
                 * self.weight
                 / Training.M_IN_KM
                 * (self.duration * 60.0))
@@ -123,17 +122,17 @@ class Swimming(Training):
 
         self.length_pool = float(length_pool)  # длина бассейна в метрах.
 
-        # сколько раз пользователь переплыл бассейн
+        # сколько раз пользователь переплыл бассейн:
         self.count_pool = float(count_pool)
         # типом float учтено, что пользователь может сдаться на пол пути
 
     def get_mean_speed(self) -> float:
-        return (self.length_pool * self.count_pool / Training.M_IN_KM
+        return (self.length_pool * self.count_pool / self.M_IN_KM
                 / self.duration)
 
     def get_spent_calories(self) -> float:
-        return ((self.get_mean_speed() + Swimming.CALORIES_SPEED_MULTIPLIER)
-                * Swimming.CALORIES_WEIGHT_MULTIPLIER
+        return ((self.get_mean_speed() + self.CALORIES_SPEED_MULTIPLIER)
+                * self.CALORIES_WEIGHT_MULTIPLIER
                 * self.weight * self.duration)
 
 
