@@ -42,6 +42,7 @@ class Training:
     """Базовый класс тренировки."""
     M_IN_KM = 1000.0
     LEN_STEP = 0.65
+    MIN_IN_H = 60
 
     def __init__(self,
                  action: int,
@@ -49,8 +50,8 @@ class Training:
                  weight: float,
                  ) -> None:
         self.action = action
-        self.duration = float(duration)
-        self.weight = float(weight)
+        self.duration = float(duration)  # ч
+        self.weight = float(weight)  # кг
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
@@ -64,7 +65,7 @@ class Training:
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         # Traing type error messaging as parent
-        return 'Ошибка: утерян тип тренировки'
+        return 0.0  # Ошибка: утерян тип тренировки'
 
     def show_training_info(self) -> InfoMessage:
         return InfoMessage(self.__class__.__name__,
@@ -97,8 +98,9 @@ class SportsWalking(Training):
 
     LEN_STEP = 0.650
     CALORIES_WEIGHT_MULTIPLIER = 0.035
-    CALORIES_WEIGHT_MULTIPLIER_2 = 0.029
-    KMH_MH_MULTIPLIER = 0.278
+    CALORIES_SPEED_HEIGHT_MULTIPLIER = 0.029
+    KMH_IN_MSEC = 0.278
+    CM_IN_M = 100
 
     def __init__(self,
                  action: int,
@@ -113,11 +115,11 @@ class SportsWalking(Training):
         '''((0.035 * вес + (средняя_скорость_в_метрах_в_секунду**2 / рост_в_метрах)
             * 0.029 * вес) * время_тренировки_в_минутах) '''
         return ((self.CALORIES_WEIGHT_MULTIPLIER * self.weight
-                + ((self.KMH_MH_MULTIPLIER
-                 * self.get_mean_speed()**2)
-                 / (self.height / 100.0))
-                * self.CALORIES_WEIGHT_MULTIPLIER_2 * self.weight)
-                * (self.duration * 60))
+                + (((self.KMH_IN_MSEC
+                 * self.get_mean_speed())**2)
+                 / (self.height / self.CM_IN_M))
+                * self.CALORIES_SPEED_HEIGHT_MULTIPLIER * self.weight)
+                * (self.duration * self.MIN_IN_H))
 
 
 class Swimming(Training):
