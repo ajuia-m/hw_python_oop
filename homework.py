@@ -19,23 +19,12 @@ class InfoMessage:
         return '{}.{}{}'.format(a, b[:n], '0' * (n - len(b)))
 
     def get_message(self) -> str:
-        message_list = ('Тип тренировки: ',
-                        f'{self.training_type}; ',
-                        'Длительность: ',
-                        f'{self.toFixed(round(self.duration, 3), 3)}',
-                        ' ч.; ',
-                        'Дистанция: ',
-                        f'{self.toFixed(round(self.distance, 3), 3)}',
-                        ' км; ',
-                        'Ср. скорость: ',
-                        f'{self.toFixed(round(self.speed, 3), 3)} км/ч; ',
-                        'Потрачено ккал: ',
-                        f'{self.toFixed(round(self.calories, 3), 3)}',
-                        '.')
-        message_str: str = ''
-        for m in message_list:
-            message_str += m
-        return message_str
+        """Получить текстовую информацию о тренировке"""
+        return (f'Тип тренировки: {self.training_type}; '
+                f'Длительность: {self.duration:.3f} ч.; '
+                f'Дистанция: {self.distance:.3f} км; '
+                f'Ср. скорость: {self.speed:.3f} км/ч; '
+                f'Потрачено ккал: {self.calories:.3f}.')
 
 
 class Training:
@@ -68,6 +57,7 @@ class Training:
         return 0.0  # Ошибка: утерян тип тренировки'
 
     def show_training_info(self) -> InfoMessage:
+        """Запросить информацию о тренировке"""
         return InfoMessage(self.__class__.__name__,
                            self.duration,
                            self.get_distance(),
@@ -112,8 +102,6 @@ class SportsWalking(Training):
         self.height = float(height)   # в см
 
     def get_spent_calories(self) -> float:
-        '''((0.035 * вес + (средняя_скорость_в_метрах_в_секунду**2 / рост_в_метрах)
-            * 0.029 * вес) * время_тренировки_в_минутах) '''
         return ((self.CALORIES_WEIGHT_MULTIPLIER * self.weight
                 + (((self.KMH_IN_MSEC
                  * self.get_mean_speed())**2)
