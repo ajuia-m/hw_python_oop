@@ -41,7 +41,7 @@ class Training:
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
         return ((float(self.action) * self.__class__.LEN_STEP)
-                / Training.M_IN_KM)
+                / self.M_IN_KM)
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения в км/ч."""
@@ -50,7 +50,7 @@ class Training:
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         # Traing type error messaging as parent
-        print('Ошибка: утерян тип тренировки')
+        raise NotImplementedError('Ошибка: утерян тип тренировки')
         return 0.0
 
     def show_training_info(self) -> InfoMessage:
@@ -64,7 +64,6 @@ class Training:
 
 class Running(Training):
     """Тренировка: бег."""
-
     CALORIES_MEAN_SPEED_MULTIPLIER = 18.0
     CALORIES_MEAN_SPEED_SHIFT = 1.79
     LEN_STEP = 0.65
@@ -74,7 +73,7 @@ class Running(Training):
                 * self.get_mean_speed()
                 + self.CALORIES_MEAN_SPEED_SHIFT)
                 * self.weight
-                / Training.M_IN_KM
+                / self.M_IN_KM
                 * (self.duration * 60.0))
 
 
