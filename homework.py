@@ -1,18 +1,15 @@
+from dataclasses import dataclass
+from typing import Type
 
 
+@dataclass
 class InfoMessage:
     """Информационное сообщение о тренировке."""
-    def __init__(self,
-                 training_type: str,
-                 duration: float,
-                 distance: float,
-                 speed: float,
-                 calories: float,) -> None:
-        self.training_type = training_type
-        self.duration = duration
-        self.distance = distance
-        self.speed = speed
-        self.calories = calories
+    training_type: str
+    duration: float
+    distance: float
+    speed: float
+    calories: float
 
     def get_message(self) -> str:
         """Получить текстовую информацию о тренировке"""
@@ -23,20 +20,16 @@ class InfoMessage:
                 f'Потрачено ккал: {self.calories:.3f}.')
 
 
+@dataclass
 class Training:
     """Базовый класс тренировки."""
     M_IN_KM = 1000.0
     LEN_STEP = 0.65
     MIN_IN_H = 60
 
-    def __init__(self,
-                 action: int,
-                 duration: float,
-                 weight: float,
-                 ) -> None:
-        self.action = action
-        self.duration = float(duration)  # ч
-        self.weight = float(weight)  # кг
+    action: int
+    duration: float
+    weight: float
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
@@ -51,7 +44,6 @@ class Training:
         """Получить количество затраченных калорий."""
         # Traing type error messaging as parent
         raise NotImplementedError('Ошибка: утерян тип тренировки')
-        return 0.0
 
     def show_training_info(self) -> InfoMessage:
         """Запросить информацию о тренировке"""
@@ -74,7 +66,7 @@ class Running(Training):
                 + self.CALORIES_MEAN_SPEED_SHIFT)
                 * self.weight
                 / self.M_IN_KM
-                * (self.duration * 60.0))
+                * (self.duration * self.MIN_IN_H))
 
 
 class SportsWalking(Training):
@@ -137,9 +129,9 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: list) -> Training:
     """Прочитать данные полученные от датчиков."""
-    training_types = {'SWM': Swimming,
-                      'RUN': Running,
-                      'WLK': SportsWalking}
+    training_types: dict[str, Type[Training]] = {'SWM': Swimming,
+                                                 'RUN': Running,
+                                                 'WLK': SportsWalking}
     return (training_types[workout_type](*data))
 
 
